@@ -551,7 +551,129 @@ _recipeViewJsDefault.default.addHandlerEvent(showRecipe); // controller ichidagi
  // window.addEventListener('hashchange', showRecipe);
  // window.addEventListener('load', showRecipe);
 
-},{"regenerator-runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./model.js":"Y4A21","./views/searchView.js":"9OQAM","./views/recipeView.js":"l60JC","./views/resultsView.js":"cSbZE"}],"dXNgZ":[function(require,module,exports) {
+},{"./model.js":"Y4A21","./views/recipeView.js":"l60JC","./views/searchView.js":"9OQAM","./views/resultsView.js":"cSbZE","regenerator-runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"Y4A21":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "state", ()=>state
+);
+parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe
+);
+parcelHelpers.export(exports, "searchResults", ()=>searchResults
+);
+var _configJs = require("./config.js");
+var _helpersJs = require("./helpers.js");
+const state = {
+    recipe: {},
+    search: {
+        query: '',
+        results: {}
+    }
+};
+const loadRecipe = async function(id) {
+    try {
+        const data = await _helpersJs.getJson(_configJs.API_URL + id);
+        const obj = data.data.recipe;
+        state.recipe = {
+            id: obj.id,
+            time: obj.cooking_time,
+            publisher: obj.publisher,
+            title: obj.title,
+            servings: obj.servings,
+            source_url: obj.source_url,
+            ingredients: obj.ingredients,
+            image: obj.image_url
+        };
+    } catch (err) {
+        throw err;
+    }
+};
+const searchResults = async function(searchKey) {
+    try {
+        const data = await _helpersJs.getJson(_configJs.API_URL + `?search=${searchKey}`);
+        const getArr = data.data.recipes;
+        state.search.results = getArr.map((val)=>{
+            return {
+                id: val.id,
+                image: val.image_url,
+                publisher: val.publisher,
+                title: val.title
+            };
+        });
+    } catch (err) {
+        throw err;
+    }
+};
+
+},{"./config.js":"k5Hzs","./helpers.js":"hGI1E","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k5Hzs":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "API_URL", ()=>API_URL
+);
+parcelHelpers.export(exports, "TIMEOUT_SEC", ()=>TIMEOUT_SEC
+);
+const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
+const TIMEOUT_SEC = 5; // bu faylda har doim ozgramaydigan qiymatlarni saqlab qoyib shu qiymatlardan foydalanamiz
+ // qachon ozgartirish kerak bolib qolsa shu joydan  ozgartirsak hamma joyda ozgaraveradi
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || dest.hasOwnProperty(key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"hGI1E":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "getJson", ()=>getJson
+);
+var _regeneratorRuntime = require("regenerator-runtime");
+var _configJs = require("./config.js");
+const timeout = function(s) {
+    return new Promise(function(_, reject) {
+        setTimeout(function() {
+            reject(new Error(`Request took too long! Timeout after ${s} second`));
+        }, s * 1000);
+    });
+};
+const getJson = async function(url) {
+    try {
+        const response = await Promise.race([
+            fetch(url),
+            timeout(_configJs.TIMEOUT_SEC)
+        ]);
+        if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        throw err;
+    }
+}; // bu js har doim foydalanadigan funksiyalarni yozib qoyamiz
+
+},{"regenerator-runtime":"dXNgZ","./config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dXNgZ":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -1117,148 +1239,7 @@ try {
     else Function("r", "regeneratorRuntime = r")(runtime);
 }
 
-},{}],"gkKU3":[function(require,module,exports) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, '__esModule', {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === 'default' || key === '__esModule' || dest.hasOwnProperty(key)) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}],"Y4A21":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "state", ()=>state
-);
-parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe
-);
-parcelHelpers.export(exports, "searchResults", ()=>searchResults
-);
-var _configJs = require("./config.js");
-var _helpersJs = require("./helpers.js");
-const state = {
-    recipe: {},
-    search: {
-        query: '',
-        results: {}
-    }
-};
-const loadRecipe = async function(id) {
-    try {
-        const data = await _helpersJs.getJson(_configJs.API_URL + id);
-        const obj = data.data.recipe;
-        state.recipe = {
-            id: obj.id,
-            time: obj.cooking_time,
-            publisher: obj.publisher,
-            title: obj.title,
-            servings: obj.servings,
-            source_url: obj.source_url,
-            ingredients: obj.ingredients,
-            image: obj.image_url
-        };
-    } catch (err) {
-        throw err;
-    }
-};
-const searchResults = async function(searchKey) {
-    try {
-        const data = await _helpersJs.getJson(_configJs.API_URL + `?search=${searchKey}`);
-        const getArr = data.data.recipes;
-        state.search.results = getArr.map((val)=>{
-            return {
-                id: val.id,
-                image: val.image_url,
-                publisher: val.publisher,
-                title: val.title
-            };
-        });
-    // return state.search.results;
-    } catch (err) {
-        throw err;
-    }
-};
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./config.js":"k5Hzs","./helpers.js":"hGI1E"}],"k5Hzs":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "API_URL", ()=>API_URL
-);
-parcelHelpers.export(exports, "TIMEOUT_SEC", ()=>TIMEOUT_SEC
-);
-const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
-const TIMEOUT_SEC = 5; // bu faylda har doim ozgramaydigan qiymatlarni saqlab qoyib shu qiymatlardan foydalanamiz
- // qachon ozgartirish kerak bolib qolsa shu joydan  ozgartirsak hamma joyda ozgaraveradi
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hGI1E":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "getJson", ()=>getJson
-);
-var _regeneratorRuntime = require("regenerator-runtime");
-var _configJs = require("./config.js");
-const timeout = function(s) {
-    return new Promise(function(_, reject) {
-        setTimeout(function() {
-            reject(new Error(`Request took too long! Timeout after ${s} second`));
-        }, s * 1000);
-    });
-};
-const getJson = async function(url) {
-    try {
-        const response = await Promise.race([
-            fetch(url),
-            timeout(_configJs.TIMEOUT_SEC)
-        ]);
-        if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
-        const data = await response.json();
-        return data;
-    } catch (err) {
-        throw err;
-    }
-}; // bu js har doim foydalanadigan funksiyalarni yozib qoyamiz
-
-},{"regenerator-runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./config.js":"k5Hzs"}],"9OQAM":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-class SearchView {
-    #parentElement = document.querySelector('.search');
-    getQuery() {
-        const val = document.querySelector('.search__field').value;
-        return val;
-    }
-    addHandlerEvent(handle) {
-        this.#parentElement.addEventListener('submit', function(e) {
-            e.preventDefault();
-            handle();
-        });
-    }
-}
-exports.default = new SearchView();
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"l60JC":[function(require,module,exports) {
+},{}],"l60JC":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("../../img/icons.svg"); // Parcel 1-versiya
@@ -1434,7 +1415,25 @@ exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
 exports.getOrigin = getOrigin;
 
-},{}],"cSbZE":[function(require,module,exports) {
+},{}],"9OQAM":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class SearchView {
+    #parentElement = document.querySelector('.search');
+    getQuery() {
+        const val = document.querySelector('.search__field').value;
+        return val;
+    }
+    addHandlerEvent(handle) {
+        this.#parentElement.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handle();
+        });
+    }
+}
+exports.default = new SearchView();
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cSbZE":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("../../img/icons.svg"); // Parcel 1-versiya
@@ -1445,7 +1444,6 @@ class ResultsView {
     render(data1) {
         this.#data = data1;
         this.#clearHtml();
-        // console.log(data);
         this.#data.map((data)=>{
             this.#generateHtml(data);
         });
@@ -1475,6 +1473,6 @@ class ResultsView {
 }
 exports.default = new ResultsView();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../img/icons.svg":"cMpiy"}]},["ddCAb","aenu9"], "aenu9", "parcelRequire733a")
+},{"../../img/icons.svg":"cMpiy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["ddCAb","aenu9"], "aenu9", "parcelRequire733a")
 
 //# sourceMappingURL=index.e37f48ea.js.map

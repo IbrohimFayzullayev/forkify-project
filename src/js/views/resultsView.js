@@ -6,7 +6,6 @@ class ResultsView {
   render(data) {
     this.#data = data;
     this.#clearHtml();
-    // console.log(data);
     this.#data.map(data => {
       this.#generateHtml(data);
     });
